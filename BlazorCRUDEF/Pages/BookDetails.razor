@@ -1,0 +1,65 @@
+﻿@page "/bookDetails"
+@page "/bookDetails/{id:int}"
+
+@inject IBookService BookService
+@inject NavigationManager NavigationManager
+
+
+<h1>Detalles de los libros</h1>
+
+<!-- El Model tiene esta bindeado con el objeto book-->
+
+<EditForm Model="@book">
+    <table class="table">
+
+        <!-- Entradas de texto para el titulo y el autor-->
+        <tr>
+            <td>Titulo o nombre del libro:</td>
+            <td><input class="form-control col-sm-4" type="text" @bind="book.Title" /></td>
+        </tr>
+        <tr>
+            <td>Nombre del autor:</td>
+            <td><input class="form-control col-sm-4" type="text" @bind="book.Author" /></td>
+        </tr>
+
+        <!--Botones para guardar y cancelar-->
+        <tr>
+            <td colspan="2" style="text-align:center">
+                <input type="submit" value="Guardar" @onclick="SaveBook"/>
+                <input type="button" value="Cancelar" @onclick="Cancel"/>
+            </td>
+        </tr>
+
+
+    </table>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public int id { get; set; }
+
+    //Objeto bindeado con el Model
+    private Book book = new Book();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            //Obtener valores del libro
+            book = await BookService.GetBookDetails(id);
+        }
+    }
+
+    protected async Task SaveBook()
+    {
+        await BookService.SaveBook(book);
+        NavigationManager.NavigateTo("/");
+
+    }
+
+    protected void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

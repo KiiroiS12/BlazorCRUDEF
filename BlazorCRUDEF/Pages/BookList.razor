@@ -1,0 +1,68 @@
+﻿@page "/"
+@inject IBookService BookService
+
+
+<h1>Listado de libros</h1>
+
+<p>Esta pagina muestra la lista de todos los libros que han sido almacenados</p>
+
+@Message
+
+<div>
+    <a href="/bookDetails"><i>Añadir nuevo libro</i></a>
+</div>
+
+@if (books == null )
+{
+    <p><em>Caragando...</em></p>
+} else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titulo</th>
+                <th>Autor</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <!-- RECORRIDO DE LOS LIBROS-->
+
+            @foreach (var book in books)
+            {
+            <tr>
+                <td>@book.Title</td>
+                <td>@book.Author</td>
+                <td><a href="/bookDetails/@book.BookId"><i>Editar</i></a></td>
+                <td><a href="/bookDelete/@book.BookId"><i>Borrar</i></a></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+@code {
+
+    //Lista de los libros
+    public IEnumerable<Book> books { get; set; }
+
+    public string Message { get; set; }
+
+    //Busqueda de los libros
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            books = await BookService.GetAllBook();
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+
+    }
+}
